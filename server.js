@@ -4,7 +4,7 @@ import seasonalRouter from "./routes/seasonal.js";
 import discontinuedRouter from "./routes/discontinued.js";
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 // Serve frontend files
 app.use(express.static("public"));
