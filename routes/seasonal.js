@@ -2,7 +2,17 @@ import { Router } from "express";
 import { getDatabase } from "../db/connection.js";
 import { ObjectId } from "mongodb";
 const router = Router();
-//metodo GET
+
+const MAX_FIELD_LENGTH = 500;
+const TOO_LONG = "Text fields must be 500 characters or fewer";
+
+// True when every supplied text field is within the length limit
+const withinLengthLimit = (values) =>
+  values.every(
+    (value) =>
+      typeof value !== "string" || value.trim().length <= MAX_FIELD_LENGTH,
+  );
+// GET /api/seasonal
 router.get("/", async (req, res) => {
   try {
     const db = getDatabase();
@@ -15,7 +25,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// metodo POST
+// POST /api/seasonal
 
 router.post("/", async (req, res) => {
   try {
@@ -64,6 +74,12 @@ router.post("/", async (req, res) => {
       });
     }
 
+    if (!withinLengthLimit([name, brand, category, season, notes, editedBy])) {
+      return res.status(400).json({
+        error: TOO_LONG,
+      });
+    }
+
     const editor =
       typeof editedBy === "string" && editedBy.trim() !== ""
         ? editedBy.trim()
@@ -106,7 +122,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//modificar un producto existente con PUT
+// PUT /api/seasonal/:id, updates an existing product
 
 router.put("/:id", async (req, res) => {
   try {
@@ -168,6 +184,12 @@ router.put("/:id", async (req, res) => {
       });
     }
 
+    if (!withinLengthLimit([name, brand, category, season, notes, editedBy])) {
+      return res.status(400).json({
+        error: TOO_LONG,
+      });
+    }
+
     const now = new Date();
 
     const updatedData = {
@@ -218,7 +240,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-//borrar
+// DELETE /api/seasonal/:id
 
 router.delete("/:id", async (req, res) => {
   try {
