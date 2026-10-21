@@ -2,6 +2,16 @@ import { Router } from "express";
 import { getDatabase } from "../db/connection.js";
 import { ObjectId } from "mongodb";
 const router = Router();
+
+const MAX_FIELD_LENGTH = 500;
+const TOO_LONG = "Text fields must be 500 characters or fewer";
+
+// True when every supplied text field is within the length limit
+const withinLengthLimit = (values) =>
+  values.every(
+    (value) =>
+      typeof value !== "string" || value.trim().length <= MAX_FIELD_LENGTH,
+  );
 //metodo GET
 router.get("/", async (req, res) => {
   try {
@@ -61,6 +71,12 @@ router.post("/", async (req, res) => {
     if (editedBy !== undefined && typeof editedBy !== "string") {
       return res.status(400).json({
         error: "Editor name must be a string",
+      });
+    }
+
+    if (!withinLengthLimit([name, brand, category, season, notes, editedBy])) {
+      return res.status(400).json({
+        error: TOO_LONG,
       });
     }
 
@@ -165,6 +181,12 @@ router.put("/:id", async (req, res) => {
     if (editedBy !== undefined && typeof editedBy !== "string") {
       return res.status(400).json({
         error: "Editor name must be a string",
+      });
+    }
+
+    if (!withinLengthLimit([name, brand, category, season, notes, editedBy])) {
+      return res.status(400).json({
+        error: TOO_LONG,
       });
     }
 
