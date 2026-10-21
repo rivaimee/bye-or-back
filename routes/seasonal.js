@@ -12,7 +12,7 @@ const withinLengthLimit = (values) =>
     (value) =>
       typeof value !== "string" || value.trim().length <= MAX_FIELD_LENGTH,
   );
-//metodo GET
+// GET /api/seasonal
 router.get("/", async (req, res) => {
   try {
     const db = getDatabase();
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// metodo POST
+// POST /api/seasonal
 
 router.post("/", async (req, res) => {
   try {
@@ -122,7 +122,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-//modificar un producto existente con PUT
+// PUT /api/seasonal/:id, updates an existing product
 
 router.put("/:id", async (req, res) => {
   try {
@@ -240,7 +240,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-//borrar
+// DELETE /api/seasonal/:id
 
 router.delete("/:id", async (req, res) => {
   try {
